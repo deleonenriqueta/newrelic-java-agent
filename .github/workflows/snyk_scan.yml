@@ -1,0 +1,51 @@
+name: Run Snyk Vulnerability Scan
+
+on:
+    workflow_dispatch:
+      agent_ref:
+        description: "Specify Branch"
+        required: false
+        default: 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: deleonenriqueta/forked-newrelic-java-agent
+          ref: 'snyk-gha'
+          path: forked-newrelic-java-agent
+
+      - name: Set gradle.properties
+        run: |
+          cd ${GITHUB_WORKSPACE}/forked-newrelic-java-agent
+          sed -i -e "s|jdk8=8|jdk8=${JAVA_HOME_8_x64}|
+          s|jdk11=11|jdk11=${JAVA_HOME_11_x64}|
+          s|jdk17=17|jdk17=${JAVA_HOME_17_x64}|" gradle.properties.gha
+          mv gradle.properties.gha gradle.properties
+
+      - name: Setup Gradle Options
+        run: echo "GRADLE_OPTIONS=-Porg.gradle.java.installations.auto-detect=false - Porg.gradle.java.installations.fromEnv=JAVA_HOME_17_x64,JAVA_HOME_11_x64,JAVA_HOME_8_x64" >> $GITHUB_ENV
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/gradle@main
+        continue-on-error: true #ensures that SARIF upload gets called
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarify@v2
+        with:
+          sarif_file: snyk.sarif

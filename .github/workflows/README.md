@@ -192,6 +192,14 @@ This workflow checks that the repository conforms to New Relic standards. It wil
 
 ---
 
+### Snyk: Dependency Scanning Action
+[snyk_scan.yml](snyk_scan.yml)
+
+This workflow checks for vulnerabilities in the agents dependencies. It will also upload Snyk scan results to the repos
+GitHub Code Scanning Alerts.
+
+---
+
 ## Release workflows
 
 ### Release - Copy to S3 (Staging)
