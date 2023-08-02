@@ -7,8 +7,8 @@ on:
         required: false
         default: 'main'
 
-env: #we use this in env var for conditionals (secrets can't be used in conditionals)
-  AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#env: #we use this in env var for conditionals (secrets can't be used in conditionals)
+#  AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Java agent
         uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.agent-ref }}
+          ref: 'main'
 
 #      - name: Configure AWS Credentials
 #        if: ${{ env.AWS_KEY != '' }}
