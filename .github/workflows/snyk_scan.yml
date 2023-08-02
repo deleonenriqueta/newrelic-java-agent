@@ -41,12 +41,12 @@ jobs:
       - uses: actions/checkout@master
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/gradle@master
-#        continue-on-error: true #ensures that SARIF upload gets called
+        continue-on-error: true #ensures that SARIF upload gets called
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --severity-threshold=high
-#      - name: Upload result to GitHub Code Scanning
-#        uses: github/codeql-action/upload-sarify@v2
-#        with:
-#          sarif_file: snyk.sarif
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarify@v2
+        with:
+          sarif_file: snyk.sarif
